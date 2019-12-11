@@ -2,15 +2,15 @@ import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Item = ({title}) => {
+const Item = props => {
   return (
     <View style={styles.item}>
       <View style={styles.containerTitulo}>
-        <Text style={styles.titulo}>{title}</Text>
+        <Text style={styles.titulo}>{props.item.nome}</Text>
       </View>
       <View style={styles.containerIcone}>
-        <TouchableOpacity>
-          <Icon name="minus" size={30} color="red" />
+        <TouchableOpacity onPress={() => props.removeJogador(props.item.id)}>
+          <Icon name="minus" size={30} color="#ff0067" />
         </TouchableOpacity>
       </View>
     </View>
