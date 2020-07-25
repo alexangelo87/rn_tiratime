@@ -5,9 +5,10 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  FlatList,
+  ScrollView,
 } from 'react-native';
 import _ from 'lodash';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Resultado = props => {
   let numJogadoresPorTime = props.navigator.getParam('numJogadores');
@@ -19,21 +20,26 @@ const Resultado = props => {
     min = 0,
     max = numJogadoresPorTime;
 
-  function Item({nome}) {
-    return (
-      <View>
-        <Text style={styles.nomeList}>{nome}</Text>
-      </View>
-    );
-  }
+  jogadores = _.shuffle(jogadores);
 
+  for (let i = 0; i < qtdTimes; i++) {
+    times[i] = jogadores.slice(min, max);
+    min += numJogadoresPorTime;
+    max += numJogadoresPorTime;
+    console.log(max);
+  }
   const renderTimes = () => {
     let equipes = [];
     for (let i = 0; i < qtdTimes; i++) {
+      let timeDividido = times[i];
+      let nomeTime = `Time ${i + 1}`;
       equipes.push(
-        <TouchableOpacity>
-          <View>
-            <Text style={styles.textTimes}>Time {i + 1}</Text>
+        <TouchableOpacity
+          onPress={() =>
+            props.navigator.navigate('Time', {timeDividido, nomeTime})
+          }>
+          <View style={styles.containerTimes}>
+            <Text style={styles.textTimes}>TIME {i + 1}</Text>
           </View>
         </TouchableOpacity>,
       );
@@ -41,28 +47,24 @@ const Resultado = props => {
     return equipes;
   };
 
-  jogadores = _.shuffle(jogadores);
-
-  for (let i = 0; i < qtdTimes; i++) {
-    times[i] = jogadores.slice(min, max);
-    min += numJogadoresPorTime;
-    max += max;
-  }
-
-  console.log(times);
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.containerTopo}>
-        <View style={styles.containerVoltar}>
-          <TouchableOpacity onPress={() => props.navigator.navigate('Home')}>
-            <Text style={styles.textVoltar}>Voltar</Text>
-          </TouchableOpacity>
+      <ScrollView>
+        <View style={styles.containerTopo}>
+          <View style={styles.containerVoltar}>
+            <TouchableOpacity
+              onPress={() => props.navigator.navigate('HomeSorteioNome')}>
+              <Icon name="arrow-left" size={30} color="#fff" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.containerTitulo}>
+            <Text style={styles.title}>
+              Total de {qtdTimes} {qtdTimes === 1 ? 'time' : 'times'}
+            </Text>
+          </View>
         </View>
-        <View style={styles.containerTitulo}>
-          <Text style={styles.title}>Total de {qtdTimes} times</Text>
-        </View>
-      </View>
-      <View>{renderTimes()}</View>
+        <View>{renderTimes()}</View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -70,13 +72,13 @@ const Resultado = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#121212',
     padding: 16,
     flexDirection: 'column',
   },
   title: {
     color: 'white',
-    fontSize: 25,
+    fontSize: 22,
   },
   containerTopo: {
     flexDirection: 'row',
@@ -86,6 +88,7 @@ const styles = StyleSheet.create({
   },
   containerTitulo: {
     flex: 5,
+    marginBottom: 20,
   },
   containerVoltar: {
     flex: 1,
@@ -96,7 +99,15 @@ const styles = StyleSheet.create({
   },
   textTimes: {
     color: 'white',
-    fontSize: 25,
+    fontSize: 16,
+    alignSelf: 'center',
+  },
+  containerTimes: {
+    backgroundColor: 'rgba(255,255,255,0.40)',
+    marginVertical: 8,
+    padding: 8,
+    borderRightWidth: 5,
+    borderRadius: 20,
   },
 });
 

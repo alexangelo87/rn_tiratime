@@ -18,12 +18,13 @@ import {
   FlatList,
   StatusBar,
   Alert,
+  TouchableHighlight,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Item from './AdapterFlatList';
 
 const Home = props => {
-  let [numJogadores, setNumJogadores] = React.useState(1);
+  let [numJogadores, setNumJogadores] = React.useState(5);
   let [jogadores, setJogadores] = React.useState([]);
   let [jogador, setJogador] = React.useState('');
 
@@ -62,9 +63,6 @@ const Home = props => {
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View>
-        <Text style={styles.textTitle}>TIRA TIME</Text>
-      </View>
-      <View>
         <Text style={styles.textLegendQtd}>Quantos jogadores por time?</Text>
         <View style={styles.containerSlider}>
           <Slider
@@ -73,12 +71,11 @@ const Home = props => {
             maximumValue={40}
             onValueChange={value => setNumJogadores(value)}
             value={numJogadores}
-            minimumTrackTintColor="orange"
-            thumbTintColor="orange"
+            minimumTrackTintColor="#ffb74d"
+            thumbTintColor="#ffb74d"
           />
         </View>
         <Text style={styles.textLegendValue}>{numJogadores}</Text>
-        {/* <TextInput style={styles.inputJogadores} keyboardType="number-pad" /> */}
       </View>
       <Text style={styles.textLegendNome}>Insira o nome do jogador:</Text>
       <View style={styles.containerNome}>
@@ -93,24 +90,21 @@ const Home = props => {
         </View>
         <View style={styles.containerButtonAdd}>
           <TouchableOpacity onPress={addJogador}>
-            <Icon name="plus" size={30} color="#000" />
+            <Icon name="plus" size={25} color="#121212" />
           </TouchableOpacity>
         </View>
       </View>
       <FlatList
         data={jogadores}
         keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <Item item={item} removeJogador={removeJogador} />
+        renderItem={({item, index}) => (
+          <Item item={{item, index}} removeJogador={removeJogador} />
         )}
       />
       <View>
-        <Button
-          title="Sortear"
-          style={styles.button}
-          color="orange"
-          onPress={() => resultado()}
-        />
+        <TouchableOpacity style={styles.button} onPress={() => resultado()}>
+          <Text style={styles.textButton}>SORTEAR</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -119,44 +113,46 @@ const Home = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#121212',
+    padding: 8,
   },
   text: {
-    color: 'white',
+    color: 'rgba(255,255,255,0.87)',
+    fontSize: 24,
   },
   textTitle: {
     fontSize: 30,
-    color: 'orange',
+    color: '#ffb74d',
     alignSelf: 'center',
     marginTop: 16,
   },
   textLegendQtd: {
-    fontSize: 16,
-    color: 'white',
+    fontSize: 24,
+    color: 'rgba(255,255,255,0.87)',
     alignSelf: 'flex-start',
     marginTop: 16,
     marginLeft: 20,
   },
   textLegendNome: {
-    fontSize: 16,
-    color: 'white',
+    fontSize: 24,
+    color: 'rgba(255,255,255,0.87)',
     alignSelf: 'flex-start',
     marginTop: 25,
     marginLeft: 20,
   },
   textLegendValue: {
-    fontSize: 35,
-    color: 'white',
+    fontSize: 48,
+    color: 'rgba(255,255,255,0.87)',
     alignSelf: 'center',
-    marginTop: 16,
+    marginTop: 5,
     marginLeft: 20,
   },
   inputJogadores: {
     height: 50,
-    borderColor: 'orange',
+    borderColor: '#ffb74d',
     borderWidth: 3,
     margin: 16,
-    color: 'white',
+    color: 'rgba(255,255,255,0.87)',
     borderRadius: 20,
     fontSize: 20,
     alignContent: 'center',
@@ -164,7 +160,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    color: 'black',
+    backgroundColor: '#ffb74d',
+    justifyContent: 'center',
+    borderRadius: 16,
+  },
+  textButton: {
+    color: '#121212',
+    alignSelf: 'center',
+    margin: 8,
   },
   containerNome: {
     flexDirection: 'row',
@@ -176,8 +179,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'orange',
+    backgroundColor: '#ffb74d',
     margin: 15,
+    borderRadius: 30,
   },
   containerLista: {
     height: null,
