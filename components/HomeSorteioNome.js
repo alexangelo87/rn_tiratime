@@ -63,6 +63,9 @@ const Home = props => {
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View>
+        <TouchableOpacity onPress={() => props.navigator.navigate('Home')}>
+          <Icon name="arrow-left" size={30} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.textLegendQtd}>Quantos jogadores por time?</Text>
         <View style={styles.containerSlider}>
           <Slider
