@@ -1,38 +1,94 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
   TextInput,
+  FlatList,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 function HomeSorteioNumero(props) {
   const [valorMinimo, setValorMinimo] = useState('1');
-  const [valorMaximo, setValorMaximo] = useState('10');
-  const [valorSorteado, setValorSorteado] = useState('0');
-  const [valoresSorteados, setValoresSorteados] = useState([]);
+  const [valorMaximo, setValorMaximo] = useState('5');
+  let [valorSorteado, setValorSorteado] = useState(null);
+  let [valoresSorteados, setValoresSorteados] = useState([]);
+  const [valorAnimacao, setValorAnimacao] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  let [flatList, setFlatList] = useState();
 
-  function sorteio() {
-    setValorSorteado(
-      Math.floor(
-        Math.random() * (parseInt(valorMaximo) - (parseInt(valorMinimo) - 1)),
-      ) + parseInt(valorMinimo),
-    );
+  function numerosRandomicos() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(Math.floor(Math.random() * parseInt(valorMaximo)));
+      }, 70);
+    });
   }
 
+  async function animacao() {
+    for (let index = 0; index <= 10; index++) {
+      setValorAnimacao(await numerosRandomicos());
+    }
+  }
+
+  async function sorteio() {
+    if (parseInt(valorMaximo) <= parseInt(valorMinimo)) {
+      Alert.alert(
+        'Erro',
+        'Valor máximo não pode ser menor ou igual ao valor mínimo',
+      );
+      return;
+    }
+    if (
+      valoresSorteados.length <=
+      parseInt(valorMaximo) - parseInt(valorMinimo)
+    ) {
+      valorSorteado =
+        Math.floor(
+          Math.random() * (parseInt(valorMaximo) - (parseInt(valorMinimo) - 1)),
+        ) + parseInt(valorMinimo);
+      if (valoresSorteados.includes(valorSorteado)) {
+        await sorteio();
+      } else {
+        setIsLoading(true);
+        await animacao();
+        if (valorSorteado !== null) {
+          valoresSorteados.push(valorSorteado);
+          console.log(valoresSorteados);
+        }
+        setValorSorteado(valorSorteado);
+        setIsLoading(false);
+      }
+    } else {
+      setValorSorteado('Fim...');
+    }
+  }
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => props.navigator.navigate('Home')}>
-        <Icon name="arrow-left" size={30} color="#fff" />
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => props.navigator.navigate('Home')}
+          style={styles.buttonVoltar}>
+          <Icon name="arrow-left" size={30} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setValoresSorteados([]);
+            setValorSorteado(null);
+          }}
+          style={styles.buttonRefresh}>
+          <Icon name="refresh" size={30} color="#fff" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.containerMinMax}>
         <TextInput
           value={valorMinimo}
           style={styles.inputValorMinimoMaximo}
           onChangeText={value => setValorMinimo(value)}
           keyboardType="numeric"
+          editable={valoresSorteados.length > 0 ? false : true}
         />
         <View style={styles.viewTextAte}>
           <Text style={styles.textAte}>até</Text>
@@ -42,12 +98,41 @@ function HomeSorteioNumero(props) {
           style={styles.inputValorMinimoMaximo}
           onChangeText={value => setValorMaximo(value)}
           keyboardType="numeric"
+          editable={valoresSorteados.length > 0 ? false : true}
         />
       </View>
-      <TouchableOpacity style={styles.btnSortear} onPress={() => sorteio()}>
+      <TouchableOpacity
+        style={styles.btnSortear}
+        onPress={async () => !isLoading && (await sorteio())}>
         <Text style={styles.textSortear}>SORTEAR</Text>
       </TouchableOpacity>
-      <Text style={styles.resultado}>{valorSorteado}</Text>
+      {!isLoading ? (
+        <Text style={styles.resultado}>{valorSorteado || 0}</Text>
+      ) : (
+        <Text style={styles.resultadoAnimacao}>{valorAnimacao}</Text>
+      )}
+
+      {valoresSorteados.length > 0 && (
+        <View style={styles.containerNumerosSorteados}>
+          <Text style={styles.titleNumerosSorteados}>Números sorteados:</Text>
+          <FlatList
+            horizontal
+            data={valoresSorteados}
+            ref={list => (flatList = list)}
+            onContentSizeChange={() => {
+              flatList.scrollToEnd({animated: false});
+            }}
+            keyExtractor={(item, index) => `${index}`}
+            renderItem={({item, index}) => (
+              <View>
+                <View style={styles.viewNumerosSorteados}>
+                  <Text style={styles.numerosSorteados}>{item}</Text>
+                </View>
+              </View>
+            )}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -57,6 +142,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
     padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+  },
+  buttonVoltar: {
+    flex: 1,
+  },
+  buttonRefresh: {
+    alignSelf: 'flex-end',
   },
   containerMinMax: {
     flexDirection: 'row',
@@ -90,13 +184,37 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   textSortear: {
-    color: 'rgba(255,255,255,0.87)',
+    color: '#121212',
     fontSize: 24,
   },
   resultado: {
     color: 'rgba(255,255,255,0.87)',
     fontSize: 56,
     alignSelf: 'center',
+  },
+  resultadoAnimacao: {
+    color: 'yellow',
+    fontSize: 56,
+    alignSelf: 'center',
+  },
+  containerNumerosSorteados: {
+    marginTop: 10,
+  },
+  titleNumerosSorteados: {
+    color: 'rgba(255,255,255,0.87)',
+  },
+  numerosSorteados: {
+    color: 'rgba(255,255,255,0.87)',
+    fontSize: 40,
+    margin: 10,
+  },
+  viewNumerosSorteados: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    padding: 5,
+    textAlign: 'center',
+    margin: 5,
+    borderRadius: 25,
+    marginTop: 15,
   },
 });
 
