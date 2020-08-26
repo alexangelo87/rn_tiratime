@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   inputValorMinimoMaximo: {
     borderWidth: 1,
-    borderColor: 'orange',
+    borderColor: '#FFCC80',
     color: 'white',
     flex: 1,
     borderRadius: 25,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnSortear: {
-    backgroundColor: 'orange',
+    backgroundColor: '#FFCC80',
     borderRadius: 80,
     width: 130,
     height: 130,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   resultadoAnimacao: {
-    color: 'yellow',
+    color: 'rgba(255,255,255,0.87)',
     fontSize: 56,
     alignSelf: 'center',
   },

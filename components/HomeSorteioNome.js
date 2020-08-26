@@ -63,9 +63,21 @@ const Home = props => {
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View>
-        <TouchableOpacity onPress={() => props.navigator.navigate('Home')}>
-          <Icon name="arrow-left" size={30} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => props.navigator.navigate('Home')}
+            style={styles.buttonVoltar}>
+            <Icon name="arrow-left" size={30} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setJogadores([]);
+            }}
+            style={styles.buttonRefresh}>
+            <Icon name="refresh" size={30} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.textLegendQtd}>Quantos jogadores por time?</Text>
         <View style={styles.containerSlider}>
           <Slider
@@ -74,8 +86,8 @@ const Home = props => {
             maximumValue={40}
             onValueChange={value => setNumJogadores(value)}
             value={numJogadores}
-            minimumTrackTintColor="#ffb74d"
-            thumbTintColor="#ffb74d"
+            minimumTrackTintColor="#FFCC80"
+            thumbTintColor="#FFCC80"
           />
         </View>
         <Text style={styles.textLegendValue}>{numJogadores}</Text>
@@ -119,13 +131,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212',
     padding: 8,
   },
+  header: {
+    flexDirection: 'row',
+  },
+  buttonVoltar: {
+    flex: 1,
+  },
+  buttonRefresh: {
+    alignSelf: 'flex-end',
+  },
   text: {
     color: 'rgba(255,255,255,0.87)',
     fontSize: 24,
   },
   textTitle: {
     fontSize: 30,
-    color: '#ffb74d',
+    color: '#FFCC80',
     alignSelf: 'center',
     marginTop: 16,
   },
@@ -152,8 +173,8 @@ const styles = StyleSheet.create({
   },
   inputJogadores: {
     height: 50,
-    borderColor: '#ffb74d',
-    borderWidth: 3,
+    borderColor: '#FFCC80',
+    borderWidth: 2,
     margin: 16,
     color: 'rgba(255,255,255,0.87)',
     borderRadius: 20,
@@ -163,7 +184,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    backgroundColor: '#ffb74d',
+    backgroundColor: '#FFCC80',
     justifyContent: 'center',
     borderRadius: 16,
   },
@@ -182,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffb74d',
+    backgroundColor: '#FFCC80',
     margin: 15,
     borderRadius: 30,
   },
