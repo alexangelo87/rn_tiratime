@@ -104,7 +104,12 @@ function HomeSorteioNumero(props) {
       <TouchableOpacity
         style={styles.btnSortear}
         onPress={async () => !isLoading && (await sorteio())}>
-        <Text style={styles.textSortear}>SORTEAR</Text>
+        <Text style={styles.textSortear}>
+          {valoresSorteados.length <=
+          parseInt(valorMaximo) - parseInt(valorMinimo)
+            ? 'SORTEAR'
+            : 'FIM'}
+        </Text>
       </TouchableOpacity>
       {!isLoading ? (
         <Text style={styles.resultado}>{valorSorteado || 0}</Text>
@@ -114,7 +119,9 @@ function HomeSorteioNumero(props) {
 
       {valoresSorteados.length > 0 && (
         <View style={styles.containerNumerosSorteados}>
-          <Text style={styles.titleNumerosSorteados}>Números sorteados:</Text>
+          <Text style={styles.titleNumerosSorteados}>
+            Números restantes: {valorMaximo - valoresSorteados.length}
+          </Text>
           <FlatList
             horizontal
             data={valoresSorteados}
@@ -202,6 +209,7 @@ const styles = StyleSheet.create({
   },
   titleNumerosSorteados: {
     color: 'rgba(255,255,255,0.87)',
+    fontSize: 16,
   },
   numerosSorteados: {
     color: 'rgba(255,255,255,0.87)',
